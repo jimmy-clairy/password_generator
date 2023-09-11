@@ -103,13 +103,12 @@ let locked = false
 function copyPassword() {
 	navigator.clipboard.writeText(passwordContent.textContent)
 
-	if (!locked) {
-		copyBtn.classList.add('active')
-		locked = true
+	if (locked) return
+	copyBtn.classList.add('active')
+	locked = true
 
-		setTimeout(() => {
-			copyBtn.classList.remove('active')
-			locked = false
-		}, 600)
-	}
+	setTimeout(() => {
+		copyBtn.classList.remove('active')
+		locked = false
+	}, 600)
 }
