@@ -1,105 +1,115 @@
 function getRandomNumber(min, max) {
-    let randomNumber = crypto.getRandomValues(new Uint32Array(1))[0]
+	let randomNumber = crypto.getRandomValues(new Uint32Array(1))[0]
 
-    // 32 bits = max de 0 à 4 294 967 295
-    randomNumber = randomNumber / 4294967296
+	// 32 bits = max de 0 à 4 294 967 295
+	randomNumber = randomNumber / 4294967296
 
-    return Math.trunc(randomNumber * (max - min + 1)) + min;
+	return Math.trunc(randomNumber * (max - min + 1)) + min
 }
 
 function addASet(fromCode, toCode) {
-    let charactersList = "";
-    for (let i = fromCode; i <= toCode; i++) {
-        charactersList += String.fromCharCode(i)
-    }
-    return charactersList;
+	let charactersList = ''
+	for (let i = fromCode; i <= toCode; i++) {
+		charactersList += String.fromCharCode(i)
+	}
+	return charactersList
 }
 
 const charactersSet = {
-    lowerCaseChars: addASet(97, 122),
-    upperCaseChars: addASet(65, 90),
-    numbers: addASet(48, 57),
-    symbols: addASet(33, 47) + addASet(58, 64) + addASet(91, 96) + addASet(123, 126),
+	lowerCaseChars: addASet(97, 122),
+	upperCaseChars: addASet(65, 90),
+	numbers: addASet(48, 57),
+	symbols:
+		addASet(33, 47) + addASet(58, 64) + addASet(91, 96) + addASet(123, 126),
 }
 
-const range = document.querySelector(".range-group input")
-const rangeLabel = document.querySelector(".range-group label");
+const range = document.querySelector('.range-group input')
+const rangeLabel = document.querySelector('.range-group label')
 
 function rangeValue() {
-    rangeLabel.textContent = `Taille du mot de passe : ${range.value}`
+	rangeLabel.textContent = `Taille du mot de passe : ${range.value}`
 }
 rangeValue()
 
-let passwordLength = range.value;
+let passwordLength = range.value
 
-const passwordContent = document.querySelector(".password-content");
-const errorMsg = document.querySelector(".error-msg");
-const generateBtn = document.querySelector(".generate-password-btn");
-const checkboxes = document.querySelectorAll(".checkboxes-container input[type='checkbox']")
+const passwordContent = document.querySelector('.password-content')
+const errorMsg = document.querySelector('.error-msg')
+const generateBtn = document.querySelector('.generate-password-btn')
+const checkboxes = document.querySelectorAll(
+	".checkboxes-container input[type='checkbox']"
+)
 
-generateBtn.addEventListener("click", createPassword)
+generateBtn.addEventListener('click', createPassword)
 function createPassword() {
-    const checkedDataSets = checkedSets()
+	const checkedDataSets = checkedSets()
 
-    if (!checkedDataSets.length) {
-        errorMsg.textContent = "Au moins une case doit être cochée !"
-        return;
-    }
-    else errorMsg.textContent = "";
+	if (!checkedDataSets.length) {
+		errorMsg.textContent = 'Au moins une case doit être cochée !'
+		return
+	} else errorMsg.textContent = ''
 
-    const concatenatedDataSets = checkedDataSets.join('')
+	const concatenatedDataSets = checkedDataSets.join('')
 
-
-    // caractères de base
-    let passwordBase = [];
-    for (let i = 0; i < checkedDataSets.length; i++) {
-        passwordBase.push(checkedDataSets[i][getRandomNumber(0, checkedDataSets[i].length - 1)])
-    }
-
-    // reste du mdp
-    let password = "";
-    for (let i = checkedDataSets.length; i < passwordLength; i++) {
-        password += concatenatedDataSets[getRandomNumber(0, concatenatedDataSets.length - 1)]
-    }
-
-    // mélange
-    passwordBase.forEach((item) => {
-        const randomIndex = getRandomNumber(0, password.length);
-        password = password.slice(0, randomIndex) + item + password.slice(randomIndex);
-    })
-
-    passwordContent.textContent = password;
+	// caractères de base
+	let passwordBase = []
+	for (let i = 0; i < checkedDataSets.length; i++) {
+		passwordBase.push(
+			checkedDataSets[i][
+				getRandomNumber(0, checkedDataSets[i].length - 1)
+			]
+		)
+	}
+	console.log(passwordBase)
+	// reste du mdp
+	let password = ''
+	for (let i = checkedDataSets.length; i < passwordLength; i++) {
+		password +=
+			concatenatedDataSets[
+				getRandomNumber(0, concatenatedDataSets.length - 1)
+			]
+	}
+	// mélange
+	passwordBase.forEach((item) => {
+		const randomIndex = getRandomNumber(0, password.length)
+		password =
+			password.slice(0, randomIndex) + item + password.slice(randomIndex)
+	})
+	passwordContent.textContent = password
 }
 createPassword()
 
 function checkedSets() {
-    const checkedSets = [];
-    checkboxes.forEach(checkbox => checkbox.checked && checkedSets.push(charactersSet[checkbox.id]));
+	const checkedSets = []
+	checkboxes.forEach(
+		(checkbox) =>
+			checkbox.checked && checkedSets.push(charactersSet[checkbox.id])
+	)
 
-    return checkedSets;
+	return checkedSets
 }
 
-range.addEventListener("input", handleRange)
+range.addEventListener('input', handleRange)
 
 function handleRange(e) {
-    passwordLength = e.target.value;
-    rangeValue()
+	passwordLength = e.target.value
+	rangeValue()
 }
 
-const copyBtn = document.querySelector(".copy-btn");
-copyBtn.addEventListener("click", copyPassword)
+const copyBtn = document.querySelector('.copy-btn')
+copyBtn.addEventListener('click', copyPassword)
 
-let locked = false;
+let locked = false
 function copyPassword() {
-    navigator.clipboard.writeText(passwordContent.textContent);
+	navigator.clipboard.writeText(passwordContent.textContent)
 
-    if (!locked) {
-        copyBtn.classList.add("active")
-        locked = true;
+	if (!locked) {
+		copyBtn.classList.add('active')
+		locked = true
 
-        setTimeout(() => {
-            copyBtn.classList.remove("active")
-            locked = false;
-        }, 600)
-    }
+		setTimeout(() => {
+			copyBtn.classList.remove('active')
+			locked = false
+		}, 600)
+	}
 }
